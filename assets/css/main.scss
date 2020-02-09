@@ -43,9 +43,8 @@ body {
   z-index: 99;
   -webkit-transition: transform 0.4s ease;
   transition: transform 0.4s ease;
-  background: rgb(42, 30, 107);
   background: var(--sidebar-bg,
-    radial-gradient(circle, rgba(42, 30, 107, 1) 0%, rgba(35, 37, 46, 1) 100%));
+    radial-gradient(circle, #22646B 0%, #223b3e 100%));
 }
 
 #sidebar a {
@@ -291,7 +290,7 @@ body {
 }
 
 #search-wrapper+a { /* 'Cancel' link */
-  color: var(--link-color, #2a408e);
+  color: var(--link-color, #22646B);
   margin-left: 1rem;
   display: none;
 }
@@ -525,8 +524,8 @@ footer .license a {
 }
 
 #access-tags .post-tag:hover {
-  background-color: #2a408e;
-  border-color: #2a408e;
+  background-color: #22646B;
+  border-color: #22646B;
   color: #fff;
   transition: none;
 }
@@ -603,7 +602,7 @@ blockquote {
 }
 
 .post-content blockquote a {
-  color: var(--link-color, #2a408e);
+  color: var(--link-color, #22646B);
 }
 
 kbd {
@@ -661,7 +660,7 @@ a.reversefootnote {
 }
 
 .post-content a {
-  color: var(--link-color, #2a408e);
+  color: var(--link-color, #22646B);
   border-bottom: 1px dotted var(--link-underline-color, #c2c6cc);
 }
 
@@ -673,7 +672,7 @@ p>a, span>a,
 #page-tag a,
 #archives a,
 #search-results a {
-  color: var(--link-color, #2a408e);
+  color: var(--link-color, #22646B);
 }
 
 .categories a,
@@ -752,7 +751,7 @@ table tbody td {
 }
 
 .post-meta a {
-  color: var(--link-color, #2a408e);
+  color: var(--link-color, #22646B);
   border-bottom: 1px dotted var(--link-underline-color, #c2c6cc);
 }
 
