@@ -35,8 +35,10 @@
 
 		setSchemeCookie(value) {
 			var expiryDate = new Date();
+			/* Remove the cookie first */
+			document.cookoie=this.cookieOptColorScheme+"; expires=Thu, 01 Jan 1970 00:00:01 GMT";
 			expiryDate.setTime(expiryDate.getTime()+(1000 * 3600 * 24 * 30)); /*30 days for this cookie*/
-			document.cookie=this.cookieOptColorScheme+"="+value+"; expires="+expiryDate.toUTCString();
+			document.cookie=this.cookieOptColorScheme+"="+value+"; expires="+expiryDate.toUTCString()+"; path=/";
 		}
 
 		getCookie(key) {
