@@ -1,0 +1,51 @@
+<script type="text/javascript">
+	class ColorScheme {
+		constructor() {
+			this.cookieOptColorScheme = "optColorScheme";
+			this.constCookieSchemeLight = "light";
+			this.constCookieSchemeDark = "dark";
+			this.constClassSchemeLight = "color-scheme-light";
+			this.constClassSchemeDark = "color-scheme-dark";
+
+			var scheme = this.getSchemeFromCookie();
+			if (scheme == this.constCookieSchemeLight) {
+				this.setLightScheme();
+			} else if (scheme == this.constCookieSchemeDark){
+				this.setDarkScheme();
+			} else {}
+		}
+
+		setDarkScheme() {
+			$('body')
+				.removeClass(this.constClassSchemeLight)
+				.addClass(this.constClassSchemeDark);
+			this.setSchemeCookie(this.constCookieSchemeDark);
+		}
+
+		setLightScheme() {
+			$('body')
+				.removeClass(this.constClassSchemeDark)
+				.addClass(this.constClassSchemeLight);
+			this.setSchemeCookie(this.constCookieSchemeLight)
+		}
+
+		getSchemeFromCookie() {
+			return this.getCookie(this.cookieOptColorScheme)
+		}
+
+		setSchemeCookie(value) {
+			var expiryDate = new Date();
+			expiryDate.setTime(expiryDate.getTime()+(1000 * 3600 * 24 * 30)); /*30 days for this cookie*/
+			document.cookie=this.cookieOptColorScheme+"="+value+"; expires="+expiryDate.toUTCString();
+		}
+
+		getCookie(key) {
+			var value = "; " + document.cookie;
+			var parts = value.split("; " + key + "=");
+			if (parts.length == 2) return parts.pop().split(";").shift();
+		}
+	}
+
+	document.ColorScheme = new ColorScheme();
+
+</script>
