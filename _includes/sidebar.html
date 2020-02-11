@@ -16,15 +16,9 @@
   <div id="profile-wrapper" class="d-flex flex-column">
     <div id="avatar" class="d-flex justify-content-center">
       <a href="{{ site.baseurl }}/" alt="avatar">
-        {% assign avatar_url = site.avatar %}
-        {% capture start %}{{ site.avatar | slice: 0 }}{% endcapture %}
-        {% if start == '/' %}
-          {% assign avatar_url = avatar_url | prepend: site.baseurl %}
-        {% endif %}
-        <img src="{{ avatar_url }}">
+        <img src="{{ site.avatar }}">
       </a>
     </div>
-
     <div class="profile-text mt-3">
       <div id="site-title">
         <a href="{{ site.baseurl }}/">{{- site.title -}}</a>
@@ -68,10 +62,12 @@
   <a href="https://twitter.com/{{ site.twitter.username }}" target="_blank">
     <i class="fab fa-twitter"></i>
   </a>
-  {% assign email = site.social.email | split: '@' %}
-  <a href="javascript:window.open('mailto:' + ['{{ email[0] }}','{{ email[1] }}'].join('@'))">
-    <i class="fas fa-envelope"></i>
+  <a href="https://linkedin.com/in/{{ site.linkedin.username }}" target="_blank">
+    <i class="fab fa-linkedin"></i>
   </a>
+  <a href="{{ site.baseurl }}/feed.xml" target="_blank">
+    <i class="fas fa-globe"></i>
+  </a>  
   <a href="{{ site.baseurl }}/feed.xml" target="_blank">
     <i class="fas fa-rss"></i>
   </a>
