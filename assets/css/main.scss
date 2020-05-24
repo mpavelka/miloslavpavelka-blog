@@ -10,7 +10,6 @@
 
 @import "_fonts";
 @import "_dark/dark-main";
-@import "mpavelka";
 
 html, body {
   height: 100%;
@@ -777,7 +776,7 @@ table tbody td {
 }
 
 .post-content {
-  line-height: 1.8;
+  line-height: 1.5;
   font-size: 1rem;
   margin-top: 2rem;
   overflow-wrap: break-word;
