@@ -1,10 +1,10 @@
 ---
 title: 'AES-GCM Encryption: Javax.crypto vs. Python cryptography'
 date: 2019-01-20 00:06:00 +0100
-categories: [Crypto, Security]
+categories: [Security]
 tags: [crypto, security, android, python]
 seo:
-  date_modified: 2020-05-24 16:24:55 +0200
+  date_modified: 2020-05-24 16:30:18 +0200
 ---
 
 I am part of a development team that produces an Android application that **exchanges _secrets_ with a server-side application**. These secrets are generated on both client-side and server-side. Before secret data is transfered to the other side, it is protected using a [hybrid cryptosystem](https://en.wikipedia.org/wiki/Hybrid_cryptosystem), where there is a AES-CBC encryption involved.
