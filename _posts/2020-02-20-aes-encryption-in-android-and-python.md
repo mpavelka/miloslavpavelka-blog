@@ -13,39 +13,44 @@ To meet a confidentiality requirement, each device uses Android Keystore to gene
 
 This post covers a step _before_ RSA encryption - the implementation of the **AES encryption** on the **server-side (Python)** and **client-side (Android)** and highlights a slight **difference** we observed.
  
-## Implementation
-
 Languages the implementation will be described for are **Kotlin** - the language of choice on the device side, and **Python** - the server-side technology in our project.
 
-**Input** to the snippets of code below is any binary `data`. In the following examples, let's work with input data of a fixed lenght. For the example let's work with this string:
+## Inputs
+
+**Binary data** of arbitrary length can be input to an AES encryption. In the following examples we will work with input data of a fixed lenght. In the examples we will be encrypting a  UTF-8 encoded string:
 
 ```
 This is a secret text.
 ```
 
-**Output** is a binary blob that looks like this:
+This is the base64 representation of the input
 
-![](/assets/img/posts/2020-02-20-aes-encryption-in-android-and-python/1.png)
+```
+VGhpcyBpcyBhIHNlY3JldCB0ZXh0Lg==
+```
 
-Such data structure can be then transfered to another party that can decrypt it if it posesses the same AES key.
+**AES Key** is a binary string of fixed length. For AES-256 encryption a 256 bit key must be used. In the following examples we will use this key (UTF-8 decoded):
 
-**AES Key** (UTF-8 decoded)
-
-> **Don't copy the key**. Always use a secure random generator to generate your own 256 bits!
+> **Don't copy the key**. Always use a secure generator to generate your own random 256 bits!
 
 ```
 0123456789ABCDEF0123456789ABCDEF
 ```
 
+Let's jump into the implementation now.
 
-### Client Side Encryption (Android Javax.crypto)
-
+## Android `Javax.crypto` AES encryption
 
 ```
-// Inut text
+import javax.crypto.Cipher
+import javax.crypto.spec.SecretKeySpec
+
+// Input text
 val textBytes = "This is a secret text.".toByteArray().
 
 // The key
+// Don’t copy the key.
+// Always use a secure generator to generate your own random 256 bits!
 val keyBytes = "0123456789ABCDEF0123456789ABCDEF".toByteArray()
 
 // Initialize AES cipher
@@ -53,30 +58,80 @@ val aesCipher = Cipher.getInstance("AES/GCM/NoPadding")
 aesCipher.init(Cipher.ENCRYPT_MODE, SecretKeySpec(keyBytes, "AES"))
 
 val IV = aesCipher.iv
-```
 
-The `IV` is an [initialization vector (IV)](https://en.wikipedia.org/wiki/Initialization_vector) - a cryptographic primitive used by [block ciphers](https://en.wikipedia.org/wiki/Block_cipher) such as [AES](https://en.wikipedia.org/wiki/Advanced_Encryption_Standard). It is generated for us by the `init()` method.
-
-```
 // Encrypt text
 val encryptedTextBytes = aesCipher.doFinal(textBytes)
 ```
 
-**Initialization vector** is generated for u
+The `IV` is a twelve-byte init vector is generated for us by the `init()` method.
 
+> [Initialization vector (IV)](https://en.wikipedia.org/wiki/Initialization_vector) - a cryptographic primitive used by [block ciphers](https://en.wikipedia.org/wiki/Block_cipher) such as [AES](https://en.wikipedia.org/wiki/Advanced_Encryption_Standard).
 
-Encrypt data
-
-```
-// Encrypt plaintext by AES secret key
-val aesCipher = Cipher.getInstance("AES/GCM/NoPadding")
-aesCipher.init(Cipher.ENCRYPT_MODE, secretKey)
-val encryptedText = aesCipher.doFinal(plaintext)
-```
-
+The init vector will look somewhat like this (Base64):
 
 ```
-val cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding")
-cipher.init(KeyProperties.PURPOSE_ENCRYPT, keyPair.public)
-val encryptedKey = cipher.doFinal(secretKey.encoded)
+0xjZNe0Mge7cYKyU
 ```
+
+... and this is the bytes of our encrypted text (Base64):
+
+```
+HuhcyjmfByaD2kv1FUfVj1cC3rbitcLmDYJL2Y5o31Zst6k4ZCM=
+```
+
+## Python `cryptography` AES encryption
+
+```
+from cryptography.hazmat.backends import default_backend
+from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
+
+# Input text
+text_bytes = "This is a secret text.".encode("utf-8")
+
+# The key
+# Don’t copy the key.
+# Always use a secure generator to generate your own random 256 bits!
+key_bytes = "0123456789ABCDEF0123456789ABCDEF".encode()
+
+# Init vector
+# We will use the same IV generated in the Javax.crypto example
+iv = base64.standard_b64decode("0xjZNe0Mge7cYKyU")
+
+
+# Encrypt the text (AES/GCM/NoPadding)
+aes_encryptor = Cipher(
+    algorithms.AES(key_bytes),
+    modes.GCM(
+        iv
+    ),
+    backend=default_backend()
+).encryptor()
+
+encrypted_text_bytes = aes_encryptor.update(text_bytes) + aes_encryptor.finalize()
+
+```
+
+And we are done! This is what the base64 representation of the result bytes looks like:
+
+```
+HuhcyjmfByaD2kv1FUfVj1cC3rbitQ==
+```
+
+## The difference
+
+Let's compare the two outputs.
+
+**Javax.crypto**
+
+```
+HuhcyjmfByaD2kv1FUfVj1cC3rbitcLmDYJL2Y5o31Zst6k4ZCM=
+```
+
+**Python cryptography**
+
+```
+HuhcyjmfByaD2kv1FUfVj1cC3rbitQ==
+```
+
+The first output is obviously larger than the second one. So what are the extra bytes at the end of the first output?
+
