@@ -7,9 +7,9 @@ seo:
   date_modified: 2020-05-24 16:30:18 +0200
 ---
 
-I am part of a development team that produces an Android application that **exchanges _secrets_ with a server-side application**. These secrets are generated on both client-side and server-side. Before secret data is transfered to the other side, it is protected using a [hybrid cryptosystem](https://en.wikipedia.org/wiki/Hybrid_cryptosystem), where there is a AES-CBC encryption involved.
+I am part of a development team that produces an Android application that **exchanges _secrets_ with a server-side application**. These secrets are generated on both client-side and server-side. Before secret data is transferred to the other side, it is protected using a [hybrid cryptosystem](https://en.wikipedia.org/wiki/Hybrid_cryptosystem), where there is AES-CBC encryption involved.
 
-During the development we bumped into a situation, when we were not able to decrypt the data on the client-side encrypted on the server-side due to slight differenceces in the APIs provided on these two platforms. These are the technologies used:
+During the development we bumped into a situation, when we were not able to decrypt the data on the client-side encrypted on the server-side due to slight differences in the APIs provided on these two platforms. These are the technologies used:
 
 - **client-side**: Android / Kotlin / [Javax.crypto](https://docs.oracle.com/javase/7/docs/api/javax/crypto/package-summary.html)
 - **server-side**: Python 3.6 / [cryptography](https://pypi.org/project/cryptography/)
@@ -30,7 +30,7 @@ This is the base64 representation of the input
 VGhpcyBpcyBhIHNlY3JldCB0ZXh0Lg==
 ```
 
-**AES Key** is a binary string of fixed length. For AES-256 encryption a 256 bit key must be used. In the following examples we will use this key (UTF-8 encoded):
+**AES Key** is a binary string of fixed length. For AES-256 encryption a 256-bit key must be used. In the following examples we will use this key (UTF-8 encoded):
 
 > **Don't copy the key**. Always use a secure generator to generate your own random 256 bits!
 
@@ -132,13 +132,13 @@ HuhcyjmfByaD2kv1FUfVj1cC3rbitcLmDYJL2Y5o31Zst6k4ZCM=
 HuhcyjmfByaD2kv1FUfVj1cC3rbitQ==
 ```
 
-The first output is obviously larger than the second one. So what are the extra bytes at the end of the first output?
+The first output is larger than the second one. So what are the extra bytes at the end of the first output?
 
 The answer is that **Javax.crypto implementation automatically appends the authentication tag to the final output**.
 
-> In [Galois/Counter Mode (GCM)](https://en.wikipedia.org/wiki/Galois/Counter_Mode) of operation for ciphers like AES, **authentication tag** is used for verification of integrity of the data.
+> In [Galois/Counter Mode (GCM)](https://en.wikipedia.org/wiki/Galois/Counter_Mode) of operation for ciphers like AES, **authentication tag** is used for verification of the integrity of the data.
 
-To achieve the same output in Python, following code must be written instead:
+To achieve the same output in Python, the following code must be written instead:
 
 ```python
 encrypted_text_bytes + aes_encryptor.tag
@@ -148,4 +148,4 @@ encrypted_text_bytes + aes_encryptor.tag
 
 When data is encrypted with AES in CBC mode using the Javax.crypto implementation, the last 16 bytes of the output is the authentication tag.
 
-When data is encrypted with AES in CBC mode in Python, **authentication tag needs to be added to the output manually** so that it can be used later to verify integrity of data during decryption.
+When data is encrypted with AES in CBC mode in Python, **authentication tag needs to be added to the output manually** so that it can be used later to verify the integrity of data during decryption.
