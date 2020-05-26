@@ -40,7 +40,7 @@ VGhpcyBpcyBhIHNlY3JldCB0ZXh0Lg==
 
 Let's jump into the implementation now.
 
-## Android `Javax.crypto` AES encryption
+## Android Javax.crypto AES-CBC encryption
 
 ```kotlin
 import javax.crypto.Cipher
@@ -80,7 +80,7 @@ The init vector will look somewhat like this (Base64):
 HuhcyjmfByaD2kv1FUfVj1cC3rbitcLmDYJL2Y5o31Zst6k4ZCM=
 ```
 
-## Python `cryptography` AES encryption
+## Python cryptography AES-CBC encryption
 
 ```python
 import base64
