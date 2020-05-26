@@ -12,7 +12,18 @@ layout: compress
 
   {% include head.html %}
 
+  {% if jekyll.environment == 'production' %}
+    {% include google-analytics.html %}
+  {% endif %}
+
   <body data-spy="scroll" data-target="#toc">
+    {% if jekyll.environment == 'production' %}
+      <!-- Google Tag Manager (noscript) -->
+      <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5M6R2TD"
+      height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+      <!-- End Google Tag Manager (noscript) -->
+    {% endif %}
+
     {% include color-scheme-script.html %}
     <div id="sidebar" class="d-flex flex-column">
       {% include sidebar.html %}
@@ -38,10 +49,6 @@ layout: compress
     <a id="back-to-top" href="#" class="btn btn-lg btn-box-shadow" role="button">
       <i class="fas fa-angle-up"></i>
     </a>
-
-    {% if jekyll.environment == 'production' %}
-      {% include google-analytics.html %}
-    {% endif %}
 
     {% include search-loader.html %}
 
