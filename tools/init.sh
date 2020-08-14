@@ -1,85 +1,89 @@
 #!/bin/bash
 #
-# Initial the Categories/Tags pages and Lastmod for posts.
-# v2.0
+# Init the evrionment for new user.
+#
+# v2.5
 # https://github.com/cotes2020/jekyll-theme-chirpy
-# © 2019 Cotes Chung
+# © 2020 Cotes Chung
 # Published under MIT License
 
 set -eu
 
-CATEGORIES=false
-TAGS=false
-LASTMOD=false
 
-WORK_DIR=$(dirname $(dirname $(realpath "$0")))
+ACTIONS_WORKFLOW=pages-deploy.yml
 
-check_status() {
-  if [[ ! -z $(git status -s) ]]; then
-    echo "Warning: Commit the changes of the repository first."
-    git status -s
-    exit 1
-  fi
+help() {
+  echo "Usage:"
+  echo
+  echo "   bash /path/to/init.sh [options]"
+  echo
+  echo "Options:"
+  echo "     --no-gh              Do not deploy to Github."
+  echo "     -h, --help           Print this help information."
 }
 
+check_init() {
+  local _has_inited=false
 
-update_files() {
-  python _scripts/py/init_all.py
-  find . | grep -E "(__pycache__|\.pyc|\.pyo$)" | xargs rm -rf
-}
-
-
-commit() {
-  msg="Updated"
-
-  if [[ ! -z $(git status categories -s) ]]; then
-    git add categories/
-    msg+=" the Categories"
-    CATEGORIES=true
-  fi
-
-  if [[ ! -z $(git status tags -s) ]]; then
-    git add tags/
-    if [[ $CATEGORIES = true ]]; then
-      msg+=","
-    else
-      msg+=" the"
+  if [[ -d .github ]]; then
+    if [[ -f .github/workflows/$ACTIONS_WORKFLOW
+      && $(find .github/workflows/ -type f -name "*.yml" | wc -l) == 1 ]]; then
+      _has_inited=true
     fi
-    msg+=" Tags"
-    TAGS=true
-  fi
-
-  if [[ ! -z $(git status _posts -s) ]]; then
-    git add _posts/
-    if [[ $CATEGORIES = true || $TAGS = true ]]; then
-      msg+=","
-    else
-      msg+=" the"
-    fi
-    msg+=" Lastmod"
-    LASTMOD=true
-  fi
-
-  if [[ $CATEGORIES = true || $TAGS = true || $LASTMOD = true ]]; then
-    msg+=" for post(s)."
-    git commit -m "[Automation] $msg"
   else
-    msg="Nothing changed."
+    _has_inited=true
   fi
 
-  echo $msg
+  if [[ $_has_inited = true ]]; then
+    echo "Already initialized."
+    exit 0
+  fi
 }
 
 
-main() {
+init_files() {
 
-  cd $WORK_DIR
+  if [[ $_no_gh = true ]]; then
+    rm -rf .github
+  else
+    mv .github/workflows/$ACTIONS_WORKFLOW.hook .
+    rm -rf .github
+    mkdir -p .github/workflows
+    mv ./${ACTIONS_WORKFLOW}.hook .github/workflows/${ACTIONS_WORKFLOW}
+  fi
 
-  check_status
+  rm -f .travis.yml
+  rm -rf _posts/* docs
 
-  update_files
+  git add -A  && git add .github -f
+  git commit -m "[Automation] Initialize the environment." -q
 
-  commit
+  echo "[INFO] Initialization successful!"
 }
 
-main
+
+check_init
+
+_no_gh=false
+
+while (( $# ))
+do
+  opt="$1"
+  case $opt in
+    --no-gh)
+      _no_gh=true
+      shift
+      ;;
+    -h|--help)
+      help
+      exit 0
+      ;;
+  *)
+    # unknown option
+    help
+    exit 1
+    ;;
+  esac
+done
+
+init_files

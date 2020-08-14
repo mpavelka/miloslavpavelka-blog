@@ -10,21 +10,26 @@
   <div id="profile-wrapper" class="d-flex flex-column">
     <div id="avatar" class="d-flex justify-content-center">
       <a href="{{ site.baseurl }}/" alt="avatar">
-        <img src="{{ site.avatar }}">
+        {% assign avatar_url = site.avatar %}
+        {% capture start %}{{ site.avatar | slice: 0 }}{% endcapture %}
+        {% if start == '/' %}
+          {% assign avatar_url = avatar_url | prepend: site.baseurl %}
+        {% endif %}
+        <img src="{{ avatar_url }}" alt="avatar" onerror="this.style.display='none'">
       </a>
     </div>
     <div class="profile-text mt-3">
-      <div id="site-title">
-        <a href="{{ site.baseurl }}/">{{- site.title -}}</a>
+      <div class="site-title">
+        <a href="{{ '/' | relative_url }}">{{- site.title -}}</a>
       </div>
-      <div id="site-subtitle" class="font-italic">{{- site.tagline -}}</div>
+      <div class="site-subtitle font-italic">{{- site.tagline -}}</div>
     </div>
   </div>
 
   <ul class="nav flex-column">
   {% assign page_urls = page.url | split: "/" %}
 
-  {% for item in site.data.label.tabs %}
+  {% for item in site.data.tabs %}
     {% assign ref = site.baseurl | append: "/" %}
 
     {% if item.path %}
@@ -39,7 +44,7 @@
         or item.name == page.tab_active
         or item.name == "Home" and page.layout == "home" %}active{% endif %}">
       <a href="{{ ref }}" class="nav-link d-flex justify-content-center align-items-center w-100">
-        <i class="fa-fw {{ item.icon }} ml-3 mr-3 unloaded"></i>
+        <i class="fa-fw {{ item.icon }} ml-xl-3 mr-xl-3 unloaded"></i>
         <span>{{ item.name | upcase }}</span>
       </a>
     </li> <!-- .nav-item -->
@@ -49,11 +54,14 @@
 
 </div><!-- #nav-wrapper -->
 
-<div class="sidebar-bottom d-flex justify-content-around mt-4">
+<div class="sidebar-bottom d-flex flex-wrap justify-content-around mt-4">
 
-  <span id="mode-toggle-wrapper" class="d-flex justify-content-center align-items-center">
-    {% include dark-mode-toggle.html %}
+  {% if site.theme_mode == "dual" %}
+  <span id="mode-toggle-wrapper">
+    {% include mode-toggle.html %}
   </span>
+  <span class="icon-border"></span>
+  {% endif %}
 
   <a href="https://github.com/{{ site.github.username }}" target="_blank">
     <i class="fab fa-github-alt"></i>

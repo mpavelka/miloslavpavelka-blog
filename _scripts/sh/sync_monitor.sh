@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Files sync monitoer
+# Files sync monitor
 # v2.0
 # https://github.com/cotes2020/jekyll-theme-chirpy
 # © 2019 Cotes Chung
@@ -8,7 +8,7 @@
 
 # $1 -> the origin file with absolute path.
 # $2 -> the origin sync directory
-# $3 -> the destination sync direcotry
+# $3 -> the destination sync directory
 
 # Omit the system temp file
 if [[ ! -f $1 ]]; then
@@ -33,6 +33,6 @@ if [[ -f "$1" ]]; then
 fi
 
 if [[ $related_dir == "_posts" ]]; then
-  python $3/_scripts/py/init_all.py
-  python $3/_scripts/py/update_posts_lastmod.py -f "$dest/$(basename $1)" -t fs
+  bash $3/_scripts/sh/create_pages.sh
+  bash $3/_scripts/sh/dump_lastmod.sh
 fi

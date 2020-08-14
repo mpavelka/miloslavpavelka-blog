@@ -5,11 +5,10 @@ language: ruby
 rvm: 2.6.5
 
 before_install:
-  - pyenv global 3.7.5
+  - bundle config path 'vendor/bundle'
 
 install:
-  - pip install -r _scripts/py/requirements.txt
-  - bundle install --path vendor/bundle --quiet
+  - bundle install --quiet
 
 addons:
   apt:
@@ -24,7 +23,7 @@ script:
   - bash _cibuild.sh
 
 branches:
-  only: master
+  only: production
 
 git:
   depth: false # for posts lastmod

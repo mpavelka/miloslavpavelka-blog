@@ -8,7 +8,20 @@ layout: compress
 ---
 
 <!DOCTYPE html>
-<html lang="en">
+
+{% if site.lang %}
+  {% assign lang = site.lang | split: "_" | first %}
+{% else %}
+  {% assign lang = 'en' %}
+{% endif %}
+
+{% capture prefer_mode %}
+  {% if site.theme_mode != "dual" %}
+    mode="{{ site.theme_mode }}"
+  {% endif %}
+{% endcapture %}
+
+<html lang="{{ lang }}" {{ prefer_mode }} >
 
   {% include head.html %}
 
@@ -24,25 +37,24 @@ layout: compress
       <!-- End Google Tag Manager (noscript) -->
     {% endif %}
 
-    {% include color-scheme-script.html %}
     <div id="sidebar" class="d-flex flex-column">
       {% include sidebar.html %}
     </div>
+
+    {% include topbar.html %}
+
     <div id="main-wrapper">
-      {% include topbar.html %}
       <div id="main">
 
-        {% capture _content %}
-          {{ content }}
-        {% endcapture %}
-
-        {% include fixlinenos.html %}
-        {{ _content }}
+        {% include refactor-content.html content=content %}
 
         {% include footer.html %}
+
       </div>
+
       {% include search-results.html %}
-    </div>
+
+    </div> <!-- #main-wrapper -->
 
     <div id="mask"></div>
 
