@@ -1,5 +1,6 @@
 ---
 title: 'AES-GCM Encryption: Javax.crypto vs. Python cryptography'
+image: '/assets/img/posts/2020-02-20-aes-encryption-in-android-and-python/2020-02-20-aes-encryption-in-android-and-python.jpg'
 date: 2020-05-15 00:06:00
 categories: [Security]
 tags: [crypto, security, android, python]
